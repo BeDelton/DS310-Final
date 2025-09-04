@@ -4,15 +4,6 @@ import copy
 import matplotlib.pyplot as plt
 
 
-data = np.loadtxt("CleanedGaltonFamilies.csv", skiprows=1, delimiter=",")
-data = data[:, 1:]
-
-childHeight = np.loadtxt("ChildrensHeight.csv", skiprows=1, delimiter=",")
-childHeight = childHeight[:, 1:]
-
-
-
-
 
 def Center_Data(A):
     """Function for creating covariances matrixes given data matrix
@@ -77,37 +68,40 @@ def Calculate_PCs(sigma2):
     return sigma, eigenVectors
 
 
-
-
-
-covarianceMatrix, Aprime = Center_Data(data)
-
-eigenvalues, eigenvectors = Calculate_PCs(covarianceMatrix)
-
-
-eigenvectors = np.argsort(eigenvectors)
-
-eigenvectors = eigenvectors[:, :-4]
-
-principalComponents = np.matmul(Aprime, eigenvectors)
-
-
-xDesign = np.vstack([np.ones(len(principalComponents)), principalComponents.T]).T
-
-beta, _, _, _ = np.linalg.lstsq(xDesign, childHeight, rcond=None)
-
-
-
-
-yPred = xDesign @ beta  
-
-
-plt.scatter(principalComponents[:, 0], childHeight, label="Children Height points")
-plt.plot(principalComponents[:, 0], yPred, color="red", label="Fitted regression line")
-plt.xlabel('x')
-plt.ylabel('Height in Inches')
-plt.legend()
-plt.show()
+if __name__ == "__main__":
+    data = np.loadtxt("CleanedGaltonFamilies.csv", skiprows=1, delimiter=",")
+    data = data[:, 1:]
+    
+    childHeight = np.loadtxt("ChildrensHeight.csv", skiprows=1, delimiter=",")
+    childHeight = childHeight[:, 1:]
+    
+    
+    covarianceMatrix, Aprime = Center_Data(data)
+    
+    eigenvalues, eigenvectors = Calculate_PCs(covarianceMatrix)
+    
+    
+    eigenvectors = np.argsort(eigenvectors)
+    
+    eigenvectors = eigenvectors[:, :-4]
+    
+    principalComponents = np.matmul(Aprime, eigenvectors)
+    
+    
+    xDesign = np.vstack([np.ones(len(principalComponents)), principalComponents.T]).T
+    
+    beta, _, _, _ = np.linalg.lstsq(xDesign, childHeight, rcond=None)
+    
+    
+    yPred = xDesign @ beta  
+    
+    
+    plt.scatter(principalComponents[:, 0], childHeight, label="Children Height points")
+    plt.plot(principalComponents[:, 0], yPred, color="red", label="Fitted regression line")
+    plt.xlabel('x')
+    plt.ylabel('Height in Inches')
+    plt.legend()
+    plt.show()
 
 
 
